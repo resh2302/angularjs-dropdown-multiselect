@@ -58,6 +58,7 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                 var $dropdownTrigger = $element.children()[0];
                 
                 $scope.toggleDropdown = function () {
+                    onClose();
                     $scope.open = !$scope.open;
                 };
 
@@ -66,13 +67,16 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                     $event.stopImmediatePropagation();
                 };
 
+
+
                 $scope.externalEvents = {
                     onItemSelect: angular.noop,
                     onItemDeselect: angular.noop,
                     onSelectAll: angular.noop,
                     onDeselectAll: angular.noop,
                     onInitDone: angular.noop,
-                    onMaxSelectionReached: angular.noop
+                    onMaxSelectionReached: angular.noop,
+                    onClose: angular.noop
                 };
 
                 $scope.settings = {
@@ -122,6 +126,12 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
 
                 $scope.singleSelection = $scope.settings.selectionLimit === 1;
 
+                function onClose(){
+                    if($scope.open){
+                        $scope.externalEvents.onClose();
+                    }
+                }
+
                 function getFindObj(id) {
                     var findObj = {};
 
@@ -162,6 +172,7 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
 
                         if (!parentFound) {
                             $scope.$apply(function () {
+                                onClose();
                                 $scope.open = false;
                             });
                         }
@@ -261,7 +272,10 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                         clearObject($scope.selectedModel);
                         angular.extend($scope.selectedModel, finalObj);
                         $scope.externalEvents.onItemSelect(finalObj);
-                        if ($scope.settings.closeOnSelect) $scope.open = false;
+                        if ($scope.settings.closeOnSelect) {
+                            onClose();
+                            $scope.open = false;
+                        }
 
                         return;
                     }
@@ -277,7 +291,10 @@ directiveModule.directive('ngDropdownMultiselect', ['$filter', '$document', '$co
                         $scope.selectedModel.push(finalObj);
                         $scope.externalEvents.onItemSelect(finalObj);
                     }
-                    if ($scope.settings.closeOnSelect) $scope.open = false;
+                    if ($scope.settings.closeOnSelect) {
+                        onClose();
+                        $scope.open = false;
+                    }
                 };
 
                 $scope.isChecked = function (id) {
