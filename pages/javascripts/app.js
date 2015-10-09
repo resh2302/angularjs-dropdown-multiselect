@@ -19,6 +19,10 @@ config(['$routeProvider', '$locationProvider', '$compileProvider',
             templateUrl: pagesPath + 'home/home.html'
         });
 
+        $routeProvider.when('/test', {
+            templateUrl: pagesPath + 'test/test.html'
+        });
+
         $routeProvider.otherwise('/');
 
     }
